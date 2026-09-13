@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="id"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260911-05-06910f9","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script><script src="/_sdk/c21197326e9a1154.telemetry_sdk.js" integrity="sha512-Aqwl+NmLtKBcMQM4HY+W9lmBHa+zP5MqSEuYfCjkzt4xeOSv2xNz81cCp7JyXBVrY+zojg5o94FHY/R31v2d3Q=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Maya Pembelahan Sel</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #123055;
+      --blue: #2274d7;
+      --cyan: #43c8e8;
+      --lime: #c7e946;
+      --yellow: #ffd75c;
+      --paper: #f5fbff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      font-family: "DM Sans", sans-serif;
+      color: var(--navy);
+      background-color: #dff5ff;
+      background-image:
+        radial-gradient(circle at 12px 12px, rgba(34, 116, 215, 0.10) 2px, transparent 2.5px);
+      background-size: 24px 24px;
+    }
+
+    .lab-shell {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .lab-header {
+      border: 4px solid #123055;
+      border-radius: 24px;
+      box-shadow: 7px 7px 0 #123055;
+    }
+
+    .science-card {
+      border: 3px solid #123055;
+      border-radius: 22px;
+      box-shadow: 5px 5px 0 rgba(18, 48, 85, 0.18);
+    }
+
+    .sim-window {
+      min-height: 400px;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 22% 22%, rgba(255,255,255,.72) 0 4px, transparent 5px),
+        radial-gradient(circle at 72% 68%, rgba(255,255,255,.58) 0 3px, transparent 4px),
+        linear-gradient(135deg, #1671c6, #4ccde8);
+      background-size: 54px 54px, 68px 68px, auto;
+    }
+
+    .cell-stage {
+      height: 350px;
+      width: 100%;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .cell {
+      width: min(255px, 62vw);
+      aspect-ratio: 1;
+      position: relative;
+      border-radius: 50%;
+      border: 8px solid rgba(255,255,255,.94);
+      background: radial-gradient(circle at 35% 28%, #faffd7 0 8%, #d7f677 26%, #9bd438 73%, #72bb29 100%);
+      box-shadow: inset -16px -18px 0 rgba(37, 104, 34, .16), 0 15px 0 rgba(13, 76, 130, .17);
+      transition: all .55s ease;
+    }
+
+    .nucleus {
+      position: absolute;
+      inset: 23%;
+      border-radius: 50%;
+      background: #3075d8;
+      border: 5px solid #1852ac;
+      box-shadow: inset -7px -7px 0 rgba(8, 48, 120, .22);
+      transition: all .55s ease;
+    }
+
+    .spindle {
+      position: absolute;
+      width: 80%;
+      height: 4px;
+      background: rgba(255,255,255,.82);
+      top: 49%;
+      left: 10%;
+      opacity: 0;
+      transform: rotate(0);
+      transition: opacity .4s ease;
+    }
+
+    .spindle::before,
+    .spindle::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,.74);
+      left: 0;
+    }
+
+    .spindle::before { transform: rotate(29deg); }
+    .spindle::after { transform: rotate(-29deg); }
+
+    .chromosome {
+      position: absolute;
+      width: 18px;
+      height: 58px;
+      border: 7px solid #f25163;
+      border-radius: 20px;
+      transform: rotate(38deg);
+      opacity: 0;
+      transition: all .6s cubic-bezier(.2,.9,.25,1.15);
+    }
+
+    .chromosome::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 58px;
+      border: 7px solid #f25163;
+      border-radius: 20px;
+      top: -7px;
+      left: -7px;
+      transform: rotate(90deg);
+    }
+
+    .c1 { left: 35%; top: 30%; }
+    .c2 { right: 34%; top: 47%; transform: rotate(-25deg); }
+    .c3 { left: 47%; bottom: 25%; transform: rotate(9deg); }
+
+    .phase-0 .nucleus { transform: scale(1); }
+    .phase-0 .chromosome { opacity: .22; transform: scale(.55) rotate(25deg); }
+
+    .phase-1 .nucleus { transform: scale(.72); opacity: .68; }
+    .phase-1 .chromosome { opacity: 1; }
+    .phase-1 .c1 { transform: rotate(42deg) translate(10px, 2px); }
+    .phase-1 .c2 { transform: rotate(-25deg) translate(-5px, -10px); }
+    .phase-1 .c3 { transform: rotate(9deg) translate(8px, 5px); }
+
+    .phase-2 .nucleus { transform: scale(.15); opacity: .15; }
+    .phase-2 .spindle { opacity: 1; }
+    .phase-2 .chromosome { opacity: 1; top: 39%; bottom: auto; }
+    .phase-2 .c1 { left: 34%; transform: rotate(45deg); }
+    .phase-2 .c2 { right: 34%; transform: rotate(45deg); }
+    .phase-2 .c3 { left: 47%; transform: rotate(45deg); }
+
+    .phase-3 .nucleus { transform: scale(.1); opacity: 0; }
+    .phase-3 .spindle { opacity: .88; }
+    .phase-3 .chromosome { opacity: 1; top: 40%; }
+    .phase-3 .c1 { left: 18%; transform: rotate(45deg) scale(.92); }
+    .phase-3 .c2 { right: 18%; transform: rotate(45deg) scale(.92); }
+    .phase-3 .c3 { left: 58%; transform: rotate(45deg) scale(.92); }
+
+    .phase-4 .cell {
+      transform: scaleX(1.16);
+      border-radius: 48%;
+    }
+    .phase-4 .cell::after {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 78%;
+      background: rgba(255,255,255,.84);
+      left: calc(50% - 4px);
+      top: 11%;
+      border-radius: 99px;
+    }
+    .phase-4 .nucleus {
+      inset: 31% auto auto 13%;
+      width: 31%;
+      height: 39%;
+      transform: none;
+      opacity: 1;
+    }
+    .phase-4 .spindle { opacity: 0; }
+    .phase-4 .chromosome { opacity: .6; transform: scale(.45) rotate(38deg); }
+    .phase-4 .c1 { left: 20%; top: 36%; }
+    .phase-4 .c2 { right: 20%; top: 36%; }
+    .phase-4 .c3 { display: none; }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,.32);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .orb-a { width: 18px; height: 18px; top: 16%; left: 11%; }
+    .orb-b { width: 28px; height: 28px; right: 13%; bottom: 18%; animation-delay: -1.4s; }
+    .orb-c { width: 12px; height: 12px; right: 25%; top: 15%; animation-delay: -2.6s; }
+
+    @keyframes float {
+      50% { transform: translateY(-13px) translateX(4px); }
+    }
+
+    .phase-dot {
+      transition: all .25s ease;
+      border: 2px solid #123055;
+    }
+
+    .phase-dot.active {
+      background: #c7e946;
+      transform: translateY(-4px) scale(1.12);
+      box-shadow: 0 4px 0 #123055;
+    }
+
+    .phase-panel { display: none; }
+    .phase-panel.active { display: block; animation: rise .38s ease both; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .control-button {
+      border: 3px solid #123055;
+      box-shadow: 3px 3px 0 #123055;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .control-button:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #123055; }
+    .control-button:active { transform: translate(3px, 3px); box-shadow: 0 0 0 #123055; }
+    .control-button:focus-visible, button:focus-visible { outline: 4px solid #ffd75c; outline-offset: 3px; }
+
+    .legend-line {
+      width: 28px;
+      height: 7px;
+      border-radius: 99px;
+      display: inline-block;
+    }
+
+    @media (max-width: 760px) {
+      .lab-shell { padding: 14px; }
+      .sim-window { min-height: 340px; }
+      .cell-stage { height: 300px; }
+      .lab-header { box-shadow: 4px 4px 0 #123055; }
+    }
+  </style>
+  <script src="/_sdk/efe904fe8a212716.data_sdk.js" type="text/javascript" integrity="sha512-oiO0pmn5llS1uDeB2l690YywxqOe/a0U1kzY6RGaLZXtyh9YjTk1CUoK/bJUugc1QbUaJMJ3IE1MtpNY5NBZCw=="></script>
+  <script src="/_sdk/6125e8aa3c264a2d.resizing_sdk.js" type="text/javascript" integrity="sha512-+j9iK2FF/yFSTU389rFqKj3v0s1ELh1r0aj3mqpsVRZujaeWi0WgN7jmTcWLcBq91dz3NCEyXqMtHbwpOxhDYg=="></script>
+ </head>
+ <body data-template-id="__page-root" style="background: rgb(223, 245, 255);">
+  <div class="lab-shell">
+   <header data-template-id="lab-header" class="canva-header lab-header bg-[#123055] px-5 py-5 text-white md:px-8" style="background: rgb(18, 48, 85); color: rgb(255, 255, 255);">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+     <div class="flex items-center gap-4">
+      <div class="grid h-12 w-12 place-items-center rounded-2xl bg-[#c7e946] text-[#123055]" aria-hidden="true"><i data-lucide="microscope" width="29" height="29"></i>
+      </div>
+      <div>
+       <p data-template-id="lab-kicker" class="canva-text mb-1 text-sm font-bold uppercase tracking-[0.18em]" style="color: rgb(199, 233, 70); font-weight: 700; font-style: normal; font-size: 13px; letter-spacing: 0.12rem;">BIOLOGY EXPLORER</p>
+       <h1 data-template-id="lab-title" class="canva-text font-extrabold leading-tight" style="color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 32px;">Lab Maya Pembelahan Sel</h1>
+      </div>
+     </div>
+     <div data-template-id="topic-badge" class="canva-tag inline-flex w-fit items-center gap-2 rounded-full bg-[#ffd75c] px-4 py-2 text-sm font-bold text-[#123055]" style="background: rgb(255, 215, 92); color: rgb(18, 48, 85);"><i data-lucide="sparkles" width="17" height="17"></i> <span data-template-id="topic-badge-text" class="canva-text" style="color: rgb(18, 48, 85); font-weight: 700; font-style: normal; font-size: 14px;">Mitosis Interaktif</span>
+     </div>
+    </div>
+   </header>
+   <main class="mt-7 grid gap-7 lg:grid-cols-[1.45fr_.85fr]">
+    <section aria-labelledby="simulation-heading">
+     <div class="mb-4 flex items-end justify-between gap-4">
+      <div>
+       <h2 id="simulation-heading" data-template-id="simulation-heading" class="canva-text font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 24px;">Jalankan simulasi sel</h2>
+       <p data-template-id="simulation-helper" class="canva-text mt-1 text-sm" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 14px;">Gunakan tombol atau nomor tahap untuk mengamati perubahan di dalam sel.</p>
+      </div>
+      <div data-template-id="live-badge" class="canva-tag shrink-0 rounded-full bg-[#c7e946] px-3 py-1.5 text-xs font-extrabold text-[#123055]" style="background: rgb(199, 233, 70); color: rgb(18, 48, 85);"><span data-template-id="live-badge-text" class="canva-text" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 12px;">● LAB AKTIF</span>
+      </div>
+     </div>
+     <div class="science-card sim-window">
+      <div class="orb orb-a" aria-hidden="true"></div>
+      <div class="orb orb-b" aria-hidden="true"></div>
+      <div class="orb orb-c" aria-hidden="true"></div>
+      <div class="cell-stage">
+       <div id="cell-model" class="cell phase-0" aria-label="Model sel pada tahap interfase">
+        <div class="nucleus"></div>
+        <div class="spindle"></div>
+        <div class="chromosome c1"></div>
+        <div class="chromosome c2"></div>
+        <div class="chromosome c3"></div>
+       </div>
+      </div>
+     </div>
+     <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-2" aria-label="Indikator tahap pembelahan"><button type="button" class="phase-dot active grid h-9 w-9 place-items-center rounded-full bg-white text-sm font-extrabold text-[#123055]" data-phase-target="0" aria-label="Pilih Interfase">1</button> <button type="button" class="phase-dot grid h-9 w-9 place-items-center rounded-full bg-white text-sm font-extrabold text-[#123055]" data-phase-target="1" aria-label="Pilih Profase">2</button> <button type="button" class="phase-dot grid h-9 w-9 place-items-center rounded-full bg-white text-sm font-extrabold text-[#123055]" data-phase-target="2" aria-label="Pilih Metafase">3</button> <button type="button" class="phase-dot grid h-9 w-9 place-items-center rounded-full bg-white text-sm font-extrabold text-[#123055]" data-phase-target="3" aria-label="Pilih Anafase">4</button> <button type="button" class="phase-dot grid h-9 w-9 place-items-center rounded-full bg-white text-sm font-extrabold text-[#123055]" data-phase-target="4" aria-label="Pilih Telofase">5</button>
+      </div>
+      <div class="flex flex-wrap gap-3"><button id="sound-button" data-template-id="sound-button" type="button" class="canva-button control-button inline-flex items-center gap-2 rounded-xl bg-white px-4 py-3 font-bold text-[#123055]" style="background: rgb(255, 255, 255); color: rgb(18, 48, 85); font-weight: 700;"> <i data-lucide="volume-2" width="19" height="19"></i> <span data-template-id="sound-button-text" class="canva-text" style="color: rgb(18, 48, 85); font-weight: 700; font-style: normal; font-size: 15px;">Suara</span> </button> <button id="reset-button" data-template-id="reset-button" type="button" class="canva-button control-button inline-flex items-center gap-2 rounded-xl bg-[#ffd75c] px-4 py-3 font-bold text-[#123055]" style="background: rgb(255, 215, 92); color: rgb(18, 48, 85); font-weight: 700;"> <i data-lucide="rotate-ccw" width="18" height="18"></i> <span data-template-id="reset-button-text" class="canva-text" style="color: rgb(18, 48, 85); font-weight: 700; font-style: normal; font-size: 15px;">Ulangi</span> </button> <button id="next-button" data-template-id="next-button" type="button" class="canva-button control-button inline-flex items-center gap-2 rounded-xl bg-[#c7e946] px-5 py-3 font-extrabold text-[#123055]" style="background: rgb(199, 233, 70); color: rgb(18, 48, 85); font-weight: 800;"> <span data-template-id="next-button-text" class="canva-text" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 15px;">Tahap Berikutnya</span> <i data-lucide="arrow-right" width="19" height="19"></i> </button>
+      </div>
+     </div>
+    </section>
+    <aside aria-labelledby="info-heading" class="space-y-5">
+     <section data-template-id="phase-information" class="canva-panel science-card bg-white p-5" style="background: rgb(255, 255, 255);">
+      <div class="mb-4 flex items-center gap-3">
+       <div class="grid h-10 w-10 place-items-center rounded-xl bg-[#2274d7] text-white" aria-hidden="true"><i data-lucide="flask-conical" width="22" height="22"></i>
+       </div>
+       <h2 id="info-heading" data-template-id="info-heading" class="canva-text font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 24px;">Catatan Pengamatan</h2>
+      </div>
+      <article class="phase-panel active" data-phase-panel="0">
+       <p data-template-id="phase-0-label" class="canva-text text-xs font-extrabold uppercase tracking-[0.14em]" style="color: rgb(34, 116, 215); font-weight: 800; font-style: normal; font-size: 12px; letter-spacing: 0.1rem;">Tahap 1 dari 5</p>
+       <h3 data-template-id="phase-0-title" class="canva-text mt-1 font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 19px;">Interfase</h3>
+       <p data-template-id="phase-0-description" class="canva-text mt-3 leading-relaxed" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 15px;">Sel sedang tumbuh dan menyalin DNA-nya. Inti sel masih terlihat jelas, sementara kromosom belum memadat.</p>
+      </article>
+      <article class="phase-panel" data-phase-panel="1">
+       <p data-template-id="phase-1-label" class="canva-text text-xs font-extrabold uppercase tracking-[0.14em]" style="color: rgb(34, 116, 215); font-weight: 800; font-style: normal; font-size: 12px; letter-spacing: 0.1rem;">Tahap 2 dari 5</p>
+       <h3 data-template-id="phase-1-title" class="canva-text mt-1 font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 19px;">Profase</h3>
+       <p data-template-id="phase-1-description" class="canva-text mt-3 leading-relaxed" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 15px;">Kromosom mulai memadat sehingga semakin mudah diamati. Membran inti mulai terurai dan benang spindel terbentuk.</p>
+      </article>
+      <article class="phase-panel" data-phase-panel="2">
+       <p data-template-id="phase-2-label" class="canva-text text-xs font-extrabold uppercase tracking-[0.14em]" style="color: rgb(34, 116, 215); font-weight: 800; font-style: normal; font-size: 12px; letter-spacing: 0.1rem;">Tahap 3 dari 5</p>
+       <h3 data-template-id="phase-2-title" class="canva-text mt-1 font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 19px;">Metafase</h3>
+       <p data-template-id="phase-2-description" class="canva-text mt-3 leading-relaxed" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 15px;">Kromosom berjajar rapi pada bidang ekuator sel. Benang spindel melekat pada bagian tengah setiap kromosom.</p>
+      </article>
+      <article class="phase-panel" data-phase-panel="3">
+       <p data-template-id="phase-3-label" class="canva-text text-xs font-extrabold uppercase tracking-[0.14em]" style="color: rgb(34, 116, 215); font-weight: 800; font-style: normal; font-size: 12px; letter-spacing: 0.1rem;">Tahap 4 dari 5</p>
+       <h3 data-template-id="phase-3-title" class="canva-text mt-1 font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 19px;">Anafase</h3>
+       <p data-template-id="phase-3-description" class="canva-text mt-3 leading-relaxed" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 15px;">Kromatid saudara berpisah dan ditarik menuju kutub sel yang berlawanan. Setiap kutub menerima salinan DNA yang sama.</p>
+      </article>
+      <article class="phase-panel" data-phase-panel="4">
+       <p data-template-id="phase-4-label" class="canva-text text-xs font-extrabold uppercase tracking-[0.14em]" style="color: rgb(34, 116, 215); font-weight: 800; font-style: normal; font-size: 12px; letter-spacing: 0.1rem;">Tahap 5 dari 5</p>
+       <h3 data-template-id="phase-4-title" class="canva-text mt-1 font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 19px;">Telofase &amp; Sitokinesis</h3>
+       <p data-template-id="phase-4-description" class="canva-text mt-3 leading-relaxed" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 15px;">Dua inti baru terbentuk. Sel membelah melalui sitokinesis dan menghasilkan dua sel anak yang identik.</p>
+      </article>
+     </section>
+     <section data-template-id="learning-card" class="canva-card science-card bg-[#123055] p-5 text-white" style="background: rgb(18, 48, 85); color: rgb(255, 255, 255);">
+      <div class="flex items-start gap-3"><i data-lucide="lightbulb" class="mt-1 shrink-0 text-[#ffd75c]" width="24" height="24"></i>
+       <div>
+        <h2 data-template-id="learning-title" class="canva-text font-extrabold" style="color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 24px;">Tujuan belajar</h2>
+        <p data-template-id="learning-description" class="canva-text mt-2 text-sm leading-relaxed" style="color: rgb(217, 244, 255); font-weight: 400; font-style: normal; font-size: 14px;">Amati bagaimana satu sel membagi materi genetiknya secara teratur untuk membentuk dua sel anak identik.</p>
+       </div>
+      </div>
+     </section>
+     <section data-template-id="legend-card" class="canva-card science-card bg-white p-5" style="background: rgb(255, 255, 255);">
+      <h2 data-template-id="legend-title" class="canva-text font-extrabold" style="color: rgb(18, 48, 85); font-weight: 800; font-style: normal; font-size: 24px;">Legenda visual</h2>
+      <div class="mt-4 space-y-3 text-sm">
+       <div class="flex items-center gap-3"><span class="legend-line bg-[#f25163]" aria-hidden="true"></span> <span data-template-id="legend-chromosome" class="canva-text" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 14px;">Kromosom / DNA yang memadat</span>
+       </div>
+       <div class="flex items-center gap-3"><span class="legend-line bg-[#3075d8]" aria-hidden="true"></span> <span data-template-id="legend-nucleus" class="canva-text" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 14px;">Inti sel</span>
+       </div>
+       <div class="flex items-center gap-3"><span class="legend-line bg-[#ffffff] border-2 border-[#123055]" aria-hidden="true"></span> <span data-template-id="legend-spindle" class="canva-text" style="color: rgb(49, 84, 119); font-weight: 400; font-style: normal; font-size: 14px;">Benang spindel penarik kromosom</span>
+       </div>
+      </div>
+     </section>
+    </aside>
+   </main>
+   <footer class="mt-7 pb-2 text-center">
+    <p data-template-id="footer-text" class="canva-text text-sm font-medium" style="color: rgb(49, 84, 119); font-weight: 400; font-style: italic; font-size: 14px;">Eksplorasi, amati, lalu ulangi untuk memahami proses mitosis.</p>
+   </footer>
+  </div>
+  <script src="/_sdk/6f16dc4ffc0cf3fe.editing_sdk.js" integrity="sha512-XcGkt+MVg9QK/rlrq9umdkP9LzshVjIu+vaITjWOSFti+dqk5aHBHkCCQ/IXnnUyJtw0F+lYzvT7m4EfPrBrjg=="></script>
+  <script>
+    let currentPhase = 0;
+    let soundEnabled = true;
+    let audioContext;
+
+    const cellModel = document.getElementById("cell-model");
+    const phaseDots = Array.from(document.querySelectorAll(".phase-dot"));
+    const phasePanels = Array.from(document.querySelectorAll(".phase-panel"));
+
+    function playTone(frequency) {
+      if (!soundEnabled) return;
+
+      try {
+        audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        gain.gain.setValueAtTime(0.055, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.22);
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.23);
+      } catch (error) {
+        soundEnabled = false;
+      }
+    }
+
+    function showPhase(phase) {
+      currentPhase = phase;
+      cellModel.className = "cell phase-" + phase;
+
+      phaseDots.forEach((dot, index) => {
+        const active = index === phase;
+        dot.classList.toggle("active", active);
+        dot.setAttribute("aria-pressed", String(active));
+      });
+
+      phasePanels.forEach((panel) => {
+        panel.classList.toggle("active", Number(panel.dataset.phasePanel) === phase);
+      });
+
+      const phaseNames = ["Interfase", "Profase", "Metafase", "Anafase", "Telofase"];
+      cellModel.setAttribute("aria-label", "Model sel pada tahap " + phaseNames[phase]);
+      playTone(360 + phase * 75);
+    }
+
+    document.getElementById("next-button").addEventListener("click", () => {
+      showPhase((currentPhase + 1) % 5);
+    });
+
+    document.getElementById("reset-button").addEventListener("click", () => {
+      showPhase(0);
+    });
+
+    document.getElementById("sound-button").addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) playTone(620);
+    });
+
+    phaseDots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        showPhase(Number(dot.dataset.phaseTarget));
+      });
+    });
+
+    lucide.createIcons();
+  </script>
+ 
+</body></html>
